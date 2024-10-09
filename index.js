@@ -24,6 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         const projectCollection = client.db("portfolioDB").collection("projects");
+        const questionCollection = client.db("portfolioDB").collection("question");
         const skillsCollection = client.db("portfolioDB").collection("skills");
         const educationCollection = client.db("portfolioDB").collection("educations");
         const experienceCollection = client.db("portfolioDB").collection("experiences");
@@ -83,6 +84,62 @@ async function run() {
             const result = await projectCollection.deleteOne(query);
             res.send(result);
         });
+
+
+
+        // question
+
+        app.post("/api/v1/question", async(req, res) => {
+            const addQuestion = req.body;
+            const result = await questionCollection.insertOne(addQuestion);
+            res.send(result);
+        });
+        // get all question
+        app.get("/api/v1/question", async(req, res) => {
+            const result = await questionCollection.find().toArray();
+            res.send(result);
+        });
+
+        // get a single projects by its ID
+        app.get("/api/v1/question/:id", async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await questionCollection.findOne(query);
+            res.send(result);
+        });
+
+        // update question
+        app.put("/api/v1/question/:id", async(req, res) => {
+            const id = req.params.id;
+            const updatedQuestion = req.body;
+
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const project = {
+                $set: {
+                    title: updatedQuestion.name,
+                    tec1: updatedQuestion.tec1,
+                },
+            };
+            const result = await questionCollection.updateOne(
+                filter,
+                project,
+                options
+            );
+
+            res.send(result);
+        });
+
+        //delete question
+        app.delete("/api/v1/question/:id", async(req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await questionCollection.deleteOne(query);
+            res.send(result);
+        });
+        //  ......................
+
+
 
         // Add skills
         app.post("/api/v1/skills", async(req, res) => {
