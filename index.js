@@ -100,7 +100,7 @@ async function run() {
             res.send(result);
         });
 
-        // get a single projects by its ID
+        // get a single question by its ID
         app.get("/api/v1/question/:id", async(req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
